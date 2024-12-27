@@ -1,89 +1,77 @@
 import React, { useCallback } from 'react';
 import { Upload } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
-import { parseResume } from '../../utils/resumeParser';
 import toast from 'react-hot-toast';
 
 export default function ResumeUpload() {
-  const { user } = useAuth();
+  const onDrop = useCallback(async (acceptedFiles: string | any[]) => {
+    if (acceptedFiles.length === 0) {
+      toast.error(
+        'No valid file selected. Please upload a PDF, DOC, or DOCX file.'
+      );
+      return;
+    }
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    if (!file || !user) return;
+    const formData = new FormData();
+    formData.append('resume', file);
 
     try {
-      // Upload file to Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('resumes')
-        .upload(fileName, file);
+      // Send file to the backend server
+      const response = await fetch('http://localhost:5000/upload', {
+        method: 'POST',
+        body: formData,
+      });
 
-      if (uploadError) throw uploadError;
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || 'Failed to upload resume');
+      }
 
-      // Create resume record in database
-      const { data: resumeData, error: dbError } = await supabase
-        .from('resumes')
-        .insert({
-          user_id: user.id,
-          file_name: fileName,
-          status: 'pending',
-          original_name: file.name
-        })
-        .select()
-        .single();
+      // Handle the response
+      console.log('Response:', response);
 
-      if (dbError) throw dbError;
+      const result = await response.json();
 
-      // Parse resume
-      const parsedData = await parseResume(file);
-      
-      // Save parsed data
-      const { error: parseError } = await supabase
-        .from('resume_data')
-        .insert({
-          resume_id: resumeData.id,
-          ...parsedData
-        });
+      console.log('Result:', result);
 
-      if (parseError) throw parseError;
-
-      // Update resume status
-      await supabase
-        .from('resumes')
-        .update({ status: 'processed' })
-        .eq('id', resumeData.id);
-
-      toast.success('Resume uploaded and processed successfully!');
+      if (result.success) {
+        toast.success('Resume uploaded and processed successfully!');
+      } else {
+        throw new Error(result.message || 'Error processing resume');
+      }
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Failed to upload resume');
+      toast.error(error?.message || 'Failed to upload resume');
     }
-  }, [user]);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       'application/pdf': ['.pdf'],
       'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        ['.docx'],
     },
-    maxFiles: 1
+    maxFiles: 1,
   });
 
   return (
     <div
       {...getRootProps()}
       className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-        ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'}`}
+        ${
+          isDragActive
+            ? 'border-blue-500 bg-blue-50'
+            : 'border-gray-300 hover:border-blue-400'
+        }`}
     >
       <input {...getInputProps()} />
       <Upload className="mx-auto h-12 w-12 text-gray-400" />
       <p className="mt-2 text-sm text-gray-600">
         {isDragActive
-          ? "Drop your resume here..."
+          ? 'Drop your resume here...'
           : "Drag 'n' drop your resume, or click to select"}
       </p>
       <p className="mt-1 text-xs text-gray-500">
