@@ -9,7 +9,8 @@ import {
   Building2,
   GraduationCap,
   Briefcase,
-} from 'lucide-react';
+  BookOpenCheck,
+} from "lucide-react";
 
 export default function Sidebar() {
   const { user, signOut } = useAuth();
@@ -39,6 +40,11 @@ export default function Sidebar() {
             name: "My Resume",
             href: "/dashboard/resume",
             icon: FileText,
+          },
+          {
+            name: "My Tests",
+            href: "/dashboard/test",
+            icon: BookOpenCheck,
           },
         ]
       : []),
