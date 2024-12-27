@@ -21,31 +21,61 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
 
   useEffect(() => {
-    // Check active sessions and subscribe to auth changes
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        fetchProfile(session.user.id);
-      } else {
-        setState(s => ({ ...s, loading: false }));
-      }
-    });
+  async function refreshSession() {
+    const session = supabase.auth.getSession();
+    if (session?.expires_at && session.expires_at < Math.floor(Date.now() / 1000)) {
+      // Token expired, refresh it
+      await supabase.auth.refreshSession();
+    }
+  }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session && event === 'SIGNED_IN') {
-        await fetchProfile(session.user.id);
-        // Redirect to dashboard after sign in
-        const origin = location.state?.from?.pathname || '/dashboard';
-        navigate(origin);
-      } else if (event === 'SIGNED_OUT') {
-        setState({ user: null, loading: false });
-        navigate('/login');
-      }
-    });
+  refreshSession();
+}, []);
 
-    return () => {
-      subscription.unsubscribe();
-    };
+
+  useEffect(() => {
+    async function initializeAuth() {
+      try {
+        // Check active session
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        console.log("Session:", session);
+
+        if (session) {
+          await fetchProfile(session.user.id);
+        } else {
+          setState((s) => ({ ...s, loading: false }));
+        }
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        setState((s) => ({ ...s, loading: false }));
+      }
+
+      // Listen for auth state changes
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log("Auth state changed:", event, session);
+
+        if (session && event === "SIGNED_IN") {
+          await fetchProfile(session.user.id);
+          const origin = location.state?.from?.pathname || "/dashboard";
+          navigate(origin);
+        } else if (event === "SIGNED_OUT") {
+          setState({ user: null, loading: false });
+          navigate("/login");
+        }
+      });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+
+    initializeAuth();
   }, [navigate, location]);
+
 
   async function fetchProfile(userId: string) {
     try {
