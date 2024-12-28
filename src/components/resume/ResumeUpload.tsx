@@ -24,9 +24,16 @@ export default function ResumeUpload() {
     const loadingToast = toast.loading("Uploading and processing resume...");
 
     try {
-      const response = await fetch("http://172.20.3.115:5000/upload", {
+       const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("User not authenticated");
+      }
+      const response = await fetch("http://localhost:5000/upload", {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {

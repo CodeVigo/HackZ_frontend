@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function CandidateProfile() {
   const { user } = useAuth();
+
+  useEffect(() => {
+    
+  console.log(user)
+    
+  }, [])
+  
 
   return (
     <div className="py-6">
@@ -20,7 +27,7 @@ export default function CandidateProfile() {
                 <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">Full name</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {user?.full_name}
+                    {user?.fullName}
                   </dd>
                 </div>
                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
