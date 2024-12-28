@@ -1,40 +1,43 @@
-import React from 'react';
-import { ResumeData } from '../../types/resume';
-import { Briefcase, GraduationCap, Wrench } from 'lucide-react';
+import React from "react";
+import {
+  Mail,
+  Phone,
+  BookOpen,
+  Briefcase,
+  Layers,
+  Link,
+  User,
+} from "lucide-react";
 
-interface ResumeDetailsProps {
-  resumeData: ResumeData;
-}
-
-export default function ResumeDetails({ resumeData }: ResumeDetailsProps) {
+export default function ResumeDetails({ data }: { data: any }) {
   return (
-    <div className="space-y-8">
-      {/* Basic Info */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900">{resumeData.full_name}</h3>
-        <div className="mt-1 text-sm text-gray-500">
-          <p>{resumeData.email}</p>
-          <p>{resumeData.phone}</p>
-        </div>
-      </div>
+    <div className="w-full bg-white shadow-lg rounded-lg p-6 mb-8">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+        Resume Details
+      </h2>
 
-      {/* Summary */}
-      <div>
-        <h4 className="text-md font-medium text-gray-900">Summary</h4>
-        <p className="mt-1 text-sm text-gray-600">{resumeData.summary}</p>
+      {/* Personal Info */}
+      <div className="flex items-center gap-4 mb-4">
+        <User className="text-blue-500 w-6 h-6" />
+        <p className="text-lg font-medium">{data.name}</p>
+      </div>
+      <div className="flex items-center gap-4 mb-4">
+        <Mail className="text-blue-500 w-6 h-6" />
+        <p className="text-lg">{data.email}</p>
+      </div>
+      <div className="flex items-center gap-4 mb-6">
+        <Phone className="text-blue-500 w-6 h-6" />
+        <p className="text-lg">{data.phone}</p>
       </div>
 
       {/* Skills */}
-      <div>
-        <div className="flex items-center">
-          <Wrench className="h-5 w-5 text-gray-400 mr-2" />
-          <h4 className="text-md font-medium text-gray-900">Skills</h4>
-        </div>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {resumeData.skills.map((skill, index) => (
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold text-gray-700 mb-4">Skills</h3>
+        <div className="flex flex-wrap gap-2">
+          {data.skills.map((skill: string, index: number) => (
             <span
               key={index}
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+              className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-lg"
             >
               {skill}
             </span>
@@ -43,47 +46,79 @@ export default function ResumeDetails({ resumeData }: ResumeDetailsProps) {
       </div>
 
       {/* Education */}
-      <div>
-        <div className="flex items-center">
-          <GraduationCap className="h-5 w-5 text-gray-400 mr-2" />
-          <h4 className="text-md font-medium text-gray-900">Education</h4>
-        </div>
-        <div className="mt-2 space-y-4">
-          {resumeData.education.map((edu, index) => (
-            <div key={index} className="border-l-2 border-gray-200 pl-4">
-              <h5 className="text-sm font-medium text-gray-900">{edu.institution}</h5>
-              <p className="text-sm text-gray-600">{edu.degree} in {edu.field}</p>
-              <p className="text-xs text-gray-500">
-                {edu.start_date} - {edu.end_date || 'Present'}
-                {edu.gpa && ` • GPA: ${edu.gpa}`}
-              </p>
-            </div>
-          ))}
-        </div>
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold text-gray-700 mb-4">Education</h3>
+        {data.education.map((edu: any, index: number) => (
+          <div key={index} className="mb-4">
+            <BookOpen className="text-blue-500 w-6 h-6 inline mr-2" />
+            <span className="text-lg font-medium">{edu.degree}</span> at{" "}
+            <span className="text-lg">{edu.institution}</span>
+            <p className="text-gray-600 text-sm">
+              {edu.startDate} - {edu.endDate}
+            </p>
+          </div>
+        ))}
       </div>
 
-      {/* Experience */}
+      {/* Work Experience */}
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold text-gray-700 mb-4">
+          Work Experience
+        </h3>
+        {data.workExperience.map((exp: any, index: number) => (
+          <div key={index} className="mb-4">
+            <Briefcase className="text-blue-500 w-6 h-6 inline mr-2" />
+            <span className="text-lg font-medium">{exp.role}</span> at{" "}
+            <span className="text-lg">{exp.company}</span>
+            <p className="text-gray-600 text-sm">
+              {exp.startDate} - {exp.endDate}
+            </p>
+            <p className="text-gray-700 mt-2">{exp.description}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Projects */}
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold text-gray-700 mb-4">Projects</h3>
+        {data.projects.map((project: any, index: number) => (
+          <div key={index} className="mb-4">
+            <Layers className="text-blue-500 w-6 h-6 inline mr-2" />
+            <span className="text-lg font-medium">{project.title}</span>
+            <p className="text-gray-700 mt-2">{project.description}</p>
+            <p className="text-sm text-blue-500 mt-1">
+              {project.links.map((link: string, linkIndex: number) => (
+                <a
+                  key={linkIndex}
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline mr-2"
+                >
+                  {link}
+                </a>
+              ))}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Links */}
       <div>
-        <div className="flex items-center">
-          <Briefcase className="h-5 w-5 text-gray-400 mr-2" />
-          <h4 className="text-md font-medium text-gray-900">Experience</h4>
-        </div>
-        <div className="mt-2 space-y-4">
-          {resumeData.experience.map((exp, index) => (
-            <div key={index} className="border-l-2 border-gray-200 pl-4">
-              <h5 className="text-sm font-medium text-gray-900">{exp.company}</h5>
-              <p className="text-sm font-medium text-gray-700">{exp.position}</p>
-              <p className="text-xs text-gray-500">
-                {exp.start_date} - {exp.end_date || 'Present'}
-              </p>
-              <ul className="mt-2 list-disc list-inside text-sm text-gray-600">
-                {exp.description.map((desc, i) => (
-                  <li key={i}>{desc}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+        <h3 className="text-xl font-semibold text-gray-700 mb-4">Links</h3>
+        {data.links.map((link: string, index: number) => (
+          <p key={index} className="mb-2">
+            <Link className="text-blue-500 w-6 h-6 inline mr-2" />
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              {link}
+            </a>
+          </p>
+        ))}
       </div>
     </div>
   );
