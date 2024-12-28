@@ -62,11 +62,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
-      <div className="flex items-center justify-center h-16 px-4">
-        <Building2 className="h-8 w-8 text-blue-600" />
-        <span className="ml-2 text-lg font-semibold text-gray-900">NextGen</span>
-      </div>
+    <div className="flex flex-col h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
       <nav className="flex-1 px-2 py-4 space-y-1">
         {navigation.map((item) => {
           const Icon = item.icon;
@@ -76,8 +72,8 @@ export default function Sidebar() {
               to={item.href}
               className={`${
                 location.pathname === item.href
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
               } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
             >
               <Icon className="mr-3 h-5 w-5" />
@@ -87,23 +83,23 @@ export default function Sidebar() {
         })}
         <button
           onClick={() => signOut()}
-          className="w-full text-left text-gray-600 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+          className="w-full text-left text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md"
         >
           <LogOut className="mr-3 h-5 w-5" />
           Sign Out
         </button>
       </nav>
-      <div className="flex items-center px-4 py-3 border-t border-gray-200">
+      <div className="flex items-center px-4 py-3 border-t border-gray-200 dark:border-gray-700">
         <div className="flex-shrink-0">
-          <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-            <span className="text-blue-600 font-medium">
+          <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+            <span className="text-blue-600 dark:text-blue-400 font-medium">
               {user?.full_name?.[0]?.toUpperCase()}
             </span>
           </div>
         </div>
         <div className="ml-3">
-          <p className="text-sm font-medium text-gray-900">{user?.full_name}</p>
-          <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.full_name}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role}</p>
         </div>
       </div>
     </div>
