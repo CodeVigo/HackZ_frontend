@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   Users,
   FileText,
@@ -22,6 +22,12 @@ export default function Sidebar() {
       ? [
           { name: "Candidates", href: "/dashboard/candidates", icon: Users },
           { name: "Jobs", href: "/dashboard/jobs", icon: Briefcase },
+          { name: "Students", href: "/dashboard/students", icon: Users },
+          {
+            name: "Placements",
+            href: "/dashboard/placements",
+            icon: Briefcase,
+          },
         ]
       : []),
     ...(user?.role === "candidate"
@@ -72,8 +78,8 @@ export default function Sidebar() {
               to={item.href}
               className={`${
                 location.pathname === item.href
-                  ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? "bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
             >
               <Icon className="mr-3 h-5 w-5" />
@@ -98,8 +104,12 @@ export default function Sidebar() {
           </div>
         </div>
         <div className="ml-3">
-          <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.full_name}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role}</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">
+            {user?.full_name}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+            {user?.role}
+          </p>
         </div>
       </div>
     </div>
